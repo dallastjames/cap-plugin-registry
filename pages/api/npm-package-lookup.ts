@@ -29,5 +29,9 @@ export default async function handler(
     res.status(NOT_FOUND).send({ error: "Package Not Found" });
     return;
   }
+  if (!packageDetails?.devDependencies?.["@capacitor/core"]) {
+    res.status(BAD_REQUEST).send({ error: "Not a Capacitor Plugin" });
+    return;
+  }
   res.status(SUCCESS).json(packageDetails);
 }
