@@ -8,7 +8,7 @@ export function PageHeader() {
         Capacitor Plugin Registry
       </Link>
       <NavigationContainer>
-        <Link className="nav-link" href="/ListPage">
+        <Link className="nav-link" href="/list">
           Plugin List
         </Link>
         <Link className="nav-link" href="/submit">
