@@ -1,6 +1,8 @@
 import { SearchInput } from "@/components/search-input";
 import { PluginKeywords } from "@/utils/enums/keywords";
 import styled from "@emotion/styled";
+import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, Typography } from "@mui/joy";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -52,7 +54,16 @@ export default function Search() {
           </Typography>
           {categories.map((category) =>
             router.query.keyword === category ? (
-              <strong key={category}>{category}</strong>
+              <AlreadySelectedKeywordContainer>
+                <strong key={category}>{category}</strong>
+                <Link
+                  href={`/search${
+                    router.query.query ? "?query=" + router.query.query : ""
+                  }`}
+                >
+                  <FontAwesomeIcon icon={faClose} className="remove-keyword" />
+                </Link>
+              </AlreadySelectedKeywordContainer>
             ) : (
               <Link
                 key={category}
@@ -120,4 +131,19 @@ const ResultsContainer = styled(Card)`
   display: flex;
   flex-direction: column;
   width: 100%;
+`;
+
+const AlreadySelectedKeywordContainer = styled.div`
+  display: flex;
+
+  strong {
+    flex-grow: 1;
+  }
+
+  .remove-keyword {
+    display: inline;
+    color: red;
+    cursor: pointer;
+    margin-top: 5px;
+  }
 `;
