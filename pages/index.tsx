@@ -1,17 +1,30 @@
 import { PluginKeywords } from "@/utils/enums/keywords";
 import styled from "@emotion/styled";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, IconButton, Input, Link, Typography } from "@mui/joy";
 import type { NextPage } from "next";
+import { useRouter } from 'next/router';
 import { useEffect, useState } from "react";
 
 const Home: NextPage = () => {
   const [keyWords, setKeyWords] = useState<string[]>([]);
+  const [searchInput, setSearchInput] = useState<string>("");
+  const [searching, setSearching] = useState<boolean>(false);
+  const router = useRouter();
 
   useEffect(() => {
     setKeyWords(Object.values(PluginKeywords).sort());
   }, []);
+
+  const handleSearch = async () => {
+    if (!searchInput || searching) {
+      return;
+    }
+
+    setSearching(true);
+    await router.push(`/search?query=${encodeURIComponent(searchInput)}`);
+  };
 
   return (
     <IndexContainer>
@@ -20,16 +33,26 @@ const Home: NextPage = () => {
         <Input
           sx={{ flex: 1, borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
           placeholder="Search plugins..."
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+          disabled={searching}
         />
         <IconButton
           type="button"
           aria-label="search"
           sx={{ borderBottomLeftRadius: 0, borderTopLeftRadius: 0 }}
+          onClick={handleSearch}
         >
-          <FontAwesomeIcon icon={faSearch} />
+          <FontAwesomeIcon
+            icon={searching ? faSpinner : faSearch}
+            className={searching ? "fa-spin" : ""}
+          />
         </IconButton>
       </SearchContainer>
-      <Typography level="h5" sx={{ m: '10px 0' }}>OR</Typography>
+      <Typography level="h5" sx={{ m: "10px 0" }}>
+        OR
+      </Typography>
       <Card variant="soft">
         <Typography level="h5" sx={{ mb: "5px" }}>
           Choose a Category
