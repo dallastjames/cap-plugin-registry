@@ -5,7 +5,7 @@ import React from "react";
 // eslint-disable-next-line react/display-name
 const LinkBehavior = React.forwardRef<
   any,
-  Omit<nLinkProps, "to"> & { href: nLinkProps["href"] }
+  Omit<nLinkProps, "to"> & { href: nLinkProps["href"], replace?: boolean }
 >((props, ref) => {
   const { href, ...other } = props;
   if (href?.toString().startsWith("http")) {

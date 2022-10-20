@@ -31,7 +31,7 @@ const Home: NextPage = () => {
     <IndexContainer>
       <HeroImage />
       <SearchInput
-        placeholder={"Search plugins..."}
+        placeholder="Search plugins..."
         value={searchInput}
         valueUpdate={(search) => setSearchInput(search)}
         handleSearch={handleSearch}
