@@ -1,4 +1,6 @@
+import { Layout } from "@/components/layout/layout";
 import { Database } from "@/utils/db-definitions";
+import { CssBaseline } from '@mui/joy';
 import { CssVarsProvider } from "@mui/joy/styles";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { Session, SessionContextProvider } from "@supabase/auth-helpers-react";
@@ -19,7 +21,10 @@ function MyApp({
       initialSession={pageProps.initialSession}
     >
       <CssVarsProvider>
-        <Component {...pageProps} />
+        <CssBaseline />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </CssVarsProvider>
     </SessionContextProvider>
   );
