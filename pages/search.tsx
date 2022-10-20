@@ -52,7 +52,7 @@ export default function Search() {
           </Typography>
           {categories.map((category) =>
             router.query.keyword === category ? (
-              <strong>{category}</strong>
+              <strong key={category}>{category}</strong>
             ) : (
               <Link
                 key={category}
