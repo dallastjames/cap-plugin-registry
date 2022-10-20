@@ -8,6 +8,12 @@ import { Session, SessionContextProvider } from "@supabase/auth-helpers-react";
 import type { AppProps } from "next/app";
 import React, { useState } from "react";
 
+// START include styles to prevent PostCSS from stripping them
+import { config } from "@fortawesome/fontawesome-svg-core";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+config.autoAddCss = false;
+// END PostCSS fix
+
 function MyApp({
   Component,
   pageProps,
