@@ -1,4 +1,14 @@
+import styled from "@emotion/styled";
 
 export default function Search() {
-  return <p>This is the search page</p>;
+  return (
+    <SearchPageContainer>
+      Hello world
+    </SearchPageContainer>
+  );
 }
+
+const SearchPageContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+`;

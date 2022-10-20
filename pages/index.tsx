@@ -1,10 +1,11 @@
+import { SearchInput } from "@/components/search-input";
 import { PluginKeywords } from "@/utils/enums/keywords";
 import styled from "@emotion/styled";
 import { faSearch, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, IconButton, Input, Link, Typography } from "@mui/joy";
 import type { NextPage } from "next";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 const Home: NextPage = () => {
@@ -29,27 +30,13 @@ const Home: NextPage = () => {
   return (
     <IndexContainer>
       <HeroImage />
-      <SearchContainer>
-        <Input
-          sx={{ flex: 1, borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
-          placeholder="Search plugins..."
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-          disabled={searching}
-        />
-        <IconButton
-          type="button"
-          aria-label="search"
-          sx={{ borderBottomLeftRadius: 0, borderTopLeftRadius: 0 }}
-          onClick={handleSearch}
-        >
-          <FontAwesomeIcon
-            icon={searching ? faSpinner : faSearch}
-            className={searching ? "fa-spin" : ""}
-          />
-        </IconButton>
-      </SearchContainer>
+      <SearchInput
+        placeholder={"Search plugins..."}
+        value={searchInput}
+        valueUpdate={(search) => setSearchInput(search)}
+        handleSearch={handleSearch}
+        searching={searching}
+      />
       <Typography level="h5" sx={{ m: "10px 0" }}>
         OR
       </Typography>
@@ -87,10 +74,6 @@ const HeroImage = styled.div`
   background-repeat: no-repeat;
   background-size: cover;
   position: relative;
-`;
-
-const SearchContainer = styled.div`
-  display: flex;
 `;
 
 const KeywordList = styled.div`
