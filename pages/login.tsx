@@ -47,7 +47,7 @@ export default function LoginPage() {
   return (
     !user && (
       <Layout>
-        <Card>
+        <Card variant="soft">
           <CardContent>
             <h2>Capacitor Plugin Registry</h2>
             {errorMessage && (

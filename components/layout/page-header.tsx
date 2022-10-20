@@ -1,25 +1,58 @@
 import styled from "@emotion/styled";
-import { Link } from "@mui/joy";
+import { Link, Typography } from "@mui/joy";
+import { useUser } from "@supabase/auth-helpers-react";
+import Image from "next/image";
+import { Username } from "../username";
 
 export function PageHeader() {
-    return (
+  const user = useUser();
+
+  return (
     <HeaderContainer>
       <Link href="/" className="header-link">
-        Capacitor Plugin Registry
+        <Image
+          src="/cap-logo.png"
+          alt="Capacitor Logo"
+          width="32px"
+          height="32px"
+        />
+        <Typography
+          sx={{
+            fontSize: "20px",
+            fontWeight: "500",
+            marginLeft: "8px",
+          }}
+        >
+          Capacitor Plugin Registry
+        </Typography>
       </Link>
       <NavigationContainer>
-        <Link className="nav-link" href="/submit">
+        <Link
+          className="nav-link"
+          href="/submit"
+          variant="solid"
+          sx={{ padding: "4px 8px", minWidth: "80px" }}
+        >
           Submit Plugin
         </Link>
-        <Link className="nav-link" href="/account">
-          Account
+        <Link
+          className="nav-link"
+          href="/account"
+          variant={user ? "plain" : "outlined"}
+          sx={{
+            padding: "4px 8px",
+            minWidth: "80px",
+            justifyContent: "center",
+          }}
+        >
+          {user ? <Username userOrName={user} /> : "Account"}
         </Link>
       </NavigationContainer>
     </HeaderContainer>
   );
 }
 
-const HeaderContainer = styled.div`
+const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;

@@ -1,12 +1,17 @@
+import { Username } from "@/components/username";
 import { Database } from "@/utils/db-definitions";
-import { Button } from "@mui/joy";
+import styled from "@emotion/styled";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button, Card, CardContent, Typography } from "@mui/joy";
 import { withPageAuth } from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 
 export default function Account() {
   const router = useRouter();
   const client = useSupabaseClient<Database>();
+  const user = useUser();
 
   const tryLogout = async () => {
     try {
@@ -19,13 +24,60 @@ export default function Account() {
   };
 
   return (
-    <div>
-      <h1>Account Page</h1>
-      <Button onClick={() => tryLogout()}>Logout</Button>
-    </div>
+    <Layout>
+      <PackageSection>
+        <Card>
+          <CardContent></CardContent>
+        </Card>
+      </PackageSection>
+      <ProfileSection variant="soft">
+        <CardContent>
+          <LogoutButtonContainer>
+            <Username
+              userOrName={user}
+              level="h5"
+              sx={{ textAlign: "center" }}
+            />
+            <Button
+              variant="soft"
+              color="danger"
+              onClick={() => tryLogout()}
+              sx={{ marginLeft: "8px" }}
+            >
+              Sign Out
+            </Button>
+          </LogoutButtonContainer>
+        </CardContent>
+      </ProfileSection>
+    </Layout>
   );
 }
 
 export const getServerSideProps = withPageAuth({
   redirectTo: "login?t=account",
 });
+
+const Icon = styled(FontAwesomeIcon)`
+  margin-right: 8px;
+`;
+
+const Layout = styled.div`
+  display: flex;
+`;
+
+const PackageSection = styled.section`
+  display: flex;
+  flex: 1;
+`;
+
+const ProfileSection = styled(Card)`
+  display: flex;
+  flex-direction: column;
+  width: 360px;
+`;
+
+const LogoutButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
