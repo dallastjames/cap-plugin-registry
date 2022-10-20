@@ -61,7 +61,8 @@ const Home: NextPage = () => {
 };
 
 const IndexContainer = styled.div`
-  width: 38rem;
+  width: 100%;
+  max-width: 38rem;
   margin: 0 auto;
   text-align: center;
 `;
