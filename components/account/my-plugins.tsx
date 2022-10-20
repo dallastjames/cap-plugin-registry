@@ -35,7 +35,7 @@ export function MyPlugins() {
   };
 
   const handleSearch = async () => {
-    if (!searchInput || searching) {
+    if (searching) {
       return;
     }
 
