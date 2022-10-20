@@ -1,28 +1,32 @@
 import styled from "@emotion/styled";
-import { Button, Card, CardContent } from "@mui/joy";
+import { Alert, Button, Card, CardContent } from "@mui/joy";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Database } from "@/utils/db-definitions";
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
 export default function LoginPage() {
   const router = useRouter();
   const user = useUser();
   const client = useSupabaseClient<Database>();
-  const [error, setError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const redirectType = router.query?.t;
 
   useEffect(() => {
     if (!!user) {
-      router.push("/account");
+      router.push(typeToRedirect(redirectType, "/account"));
     }
-  }, []);
+  }, [user, router]);
 
   const tryLogin = async () => {
-    setError(null);
+    setErrorMessage(null);
     try {
+      console.log(
+        `${location.protocol}//${location.host}${typeToRedirect(redirectType)}`
+      );
       const { error } = await client.auth.signInWithOAuth({
         provider: "github",
         options: {
@@ -32,31 +36,42 @@ export default function LoginPage() {
         },
       });
       if (error) throw error;
+      console.log("after error");
     } catch (e: any) {
       console.error(e);
       const errorMessage = (e.error_description || e.message) as string;
-      setError(errorMessage);
+      setErrorMessage(errorMessage);
     }
   };
 
   return (
-    <Layout>
-      <Card>
-        <CardContent>
-          <h2>Capacitor Plugin Registry</h2>
-          <Button onClick={() => tryLogin()}>
-            <Icon icon={faGithub} />
-            Sign In With Github
-          </Button>
-        </CardContent>
-      </Card>
-    </Layout>
+    !user && (
+      <Layout>
+        <Card>
+          <CardContent>
+            <h2>Capacitor Plugin Registry</h2>
+            {errorMessage && (
+              <ErrorWarning variant="soft" color="danger">
+                {errorMessage}
+              </ErrorWarning>
+            )}
+            <Button onClick={() => tryLogin()}>
+              <Icon icon={faGithub} />
+              Sign In With Github
+            </Button>
+          </CardContent>
+        </Card>
+      </Layout>
+    )
   );
 }
 
-function typeToRedirect(type?: string | string[]): string {
+function typeToRedirect(
+  type?: string | string[],
+  defaultPath: string = "/"
+): string {
   if (!type || Array.isArray(type)) {
-    return "/";
+    return defaultPath;
   }
   switch (type) {
     case "submit":
@@ -64,7 +79,7 @@ function typeToRedirect(type?: string | string[]): string {
     case "account":
       return "/account";
     default:
-      return "/";
+      return defaultPath;
   }
 }
 
@@ -77,4 +92,8 @@ const Layout = styled.div`
 
 const Icon = styled(FontAwesomeIcon)`
   margin-right: 8px;
+`;
+
+const ErrorWarning = styled(Alert)`
+  margin-bottom: 6px;
 `;

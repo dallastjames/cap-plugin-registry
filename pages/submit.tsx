@@ -1,10 +1,10 @@
 import { SUCCESS } from "@/utils/http-codes";
 import styled from "@emotion/styled";
 import { Box, Button, Card, CardContent, Input } from "@mui/joy";
-import type { NextPage } from "next";
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 import { useState } from "react";
 
-const Submit: NextPage = () => {
+export default function SubmitPage() {
   const [error, setError] = useState("");
   const [packageId, setPackageId] = useState("");
   const [packageInfo, setPackageInfo] = useState(null);
@@ -38,9 +38,11 @@ const Submit: NextPage = () => {
       <pre>{packageInfo ? JSON.stringify(packageInfo, null, 2) : null}</pre>
     </Box>
   );
-};
+}
 
-export default Submit;
+export const getServerSideProps = withPageAuth({
+  redirectTo: "login?t=submit",
+});
 
 export const ErrorEl = styled.p`
   color: maroon;
