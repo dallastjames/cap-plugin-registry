@@ -26,7 +26,6 @@ dependencies:
   '@supabase/auth-helpers-react': 0.3.0
   '@supabase/supabase-js': 2.0.2
   next: 12.3.1_biqbaboplfbrettd7655fr4n2y
-  prettier: 2.7.1
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
 
@@ -36,6 +35,7 @@ devDependencies:
   '@types/react-dom': 18.0.6
   eslint: 8.25.0
   eslint-config-next: 12.3.1_z4bbprzjrhnsfa24uvmcbu7f5q
+  prettier: 2.7.1
   typescript: 4.8.4
 
 packages:
@@ -2152,7 +2152,7 @@ packages:
     resolution: {integrity: sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==}
     engines: {node: '>=10.13.0'}
     hasBin: true
-    dev: false
+    dev: true
 
   /prop-types/15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
