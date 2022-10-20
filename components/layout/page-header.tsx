@@ -2,17 +2,17 @@ import styled from "@emotion/styled";
 import { Link } from "@mui/joy";
 
 export function PageHeader() {
-  return (
+    return (
     <HeaderContainer>
       <Link href="/" className="header-link">
         Capacitor Plugin Registry
       </Link>
       <NavigationContainer>
-        <Link className="nav-link" href="/list">
-          Plugin List
-        </Link>
         <Link className="nav-link" href="/submit">
           Submit Plugin
+        </Link>
+        <Link className="nav-link" href="/account">
+          Account
         </Link>
       </NavigationContainer>
     </HeaderContainer>
