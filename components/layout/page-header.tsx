@@ -8,7 +8,7 @@ export function PageHeader() {
         Capacitor Plugin Registry
       </Link>
       <NavigationContainer>
-        <Link className="nav-link" href="/list">
+        <Link className="nav-link" href="/ListPage">
           Plugin List
         </Link>
         <Link className="nav-link" href="/submit">
@@ -42,5 +42,5 @@ const HeaderContainer = styled.div`
 const NavigationContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
 `;
