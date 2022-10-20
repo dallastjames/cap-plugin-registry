@@ -1,9 +1,10 @@
 import { SearchInput } from "@/components/search-input";
-import { PluginKeywords } from "@/utils/enums/keywords";
+import { PluginCategories } from "@/utils/enums/categories";
 import styled from "@emotion/styled";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, Typography } from "@mui/joy";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -15,7 +16,7 @@ export default function Search() {
   const router = useRouter();
 
   useEffect(() => {
-    setCategories(Object.values(PluginKeywords).sort());
+    setCategories(Object.values(PluginCategories).sort());
   }, []);
 
   useEffect(() => {
@@ -40,6 +41,9 @@ export default function Search() {
 
   return (
     <SearchPageContainer>
+      <Head>
+        <title>Search Results | Capacitor Plugin Registry</title>
+      </Head>
       <SearchInput
         placeholder="Search plugins..."
         value={searchInput}

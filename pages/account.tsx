@@ -1,11 +1,11 @@
+import { MyPlugins } from "@/components/account/my-plugins";
 import { Username } from "@/components/username";
 import { Database } from "@/utils/db-definitions";
 import styled from "@emotion/styled";
-import { faGithub } from "@fortawesome/free-brands-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Card, CardContent, Typography } from "@mui/joy";
 import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 
 export default function Account() {
@@ -25,24 +25,25 @@ export default function Account() {
 
   return (
     <Layout>
+      <Head>
+        <title>Account | Capacitor Plugin Registry</title>
+      </Head>
       <PackageSection>
         <Card>
-          <CardContent></CardContent>
+          <CardContent>
+            <MyPlugins />
+          </CardContent>
         </Card>
       </PackageSection>
       <ProfileSection variant="soft">
         <CardContent>
+          <Username userOrName={user} level="h5" sx={{ textAlign: "center" }} />
           <LogoutButtonContainer>
-            <Username
-              userOrName={user}
-              level="h5"
-              sx={{ textAlign: "center" }}
-            />
             <Button
               variant="soft"
               color="danger"
               onClick={() => tryLogout()}
-              sx={{ marginLeft: "8px" }}
+              sx={{ margin: "12px 0 0 0" }}
             >
               Sign Out
             </Button>
@@ -57,17 +58,19 @@ export const getServerSideProps = withPageAuth({
   redirectTo: "login?t=account",
 });
 
-const Icon = styled(FontAwesomeIcon)`
-  margin-right: 8px;
-`;
-
 const Layout = styled.div`
   display: flex;
+  margin-top: 32px;
+  gap: 20px;
 `;
 
 const PackageSection = styled.section`
   display: flex;
   flex: 1;
+
+  > * {
+    flex: 1;
+  }
 `;
 
 const ProfileSection = styled(Card)`

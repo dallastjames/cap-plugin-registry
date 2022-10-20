@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Database } from "@/utils/db-definitions";
 import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+import Head from "next/head";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -47,6 +48,9 @@ export default function LoginPage() {
   return (
     !user && (
       <Layout>
+        <Head>
+          <title>Login | Capacitor Plugin Registry</title>
+        </Head>
         <Card variant="soft">
           <CardContent>
             <h2>Capacitor Plugin Registry</h2>

@@ -1,10 +1,11 @@
 import { SearchInput } from "@/components/search-input";
-import { PluginKeywords } from "@/utils/enums/keywords";
+import { PluginCategories } from "@/utils/enums/categories";
 import styled from "@emotion/styled";
 import { faSearch, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, IconButton, Input, Link, Typography } from "@mui/joy";
 import type { NextPage } from "next";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -15,7 +16,7 @@ const Home: NextPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    setKeyWords(Object.values(PluginKeywords).sort());
+    setKeyWords(Object.values(PluginCategories).sort());
   }, []);
 
   const handleSearch = async () => {
@@ -29,6 +30,9 @@ const Home: NextPage = () => {
 
   return (
     <IndexContainer>
+      <Head>
+        <title>Capacitor Plugin Registry</title>
+      </Head>
       <HeroImage />
       <SearchInput
         placeholder="Search plugins..."

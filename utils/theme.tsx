@@ -5,7 +5,7 @@ import React from "react";
 // eslint-disable-next-line react/display-name
 const LinkBehavior = React.forwardRef<
   any,
-  Omit<nLinkProps, "to"> & { href: nLinkProps["href"], replace?: boolean }
+  Omit<nLinkProps, "to"> & { href: nLinkProps["href"]; replace?: boolean }
 >((props, ref) => {
   const { href, ...other } = props;
   if (href?.toString().startsWith("http")) {
@@ -70,6 +70,7 @@ export const siteTheme = extendTheme({
 });
 
 export enum SiteColors {
+  PRIMARY = "#176bff",
   TEXT = "#2d4665",
   TEXT_EMPHASIS = "#001a3a",
   TEXT_SUBDUED = "#556170",
