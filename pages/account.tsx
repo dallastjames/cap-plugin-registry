@@ -1,7 +1,9 @@
-import type { NextPage } from "next";
+import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 
-const Account: NextPage = () => {
+export default function Account() {
   return <p>This is an account page</p>;
-};
+}
 
-export default Account;
+export const getServerSideProps = withPageAuth({
+  redirectTo: "login",
+});
