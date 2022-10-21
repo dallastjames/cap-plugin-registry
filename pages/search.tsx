@@ -11,7 +11,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function Search() {
   const [searchInput, setSearchInput] = useState<string>("");
@@ -20,36 +20,15 @@ export default function Search() {
   const [plugins, setPlugins] = useState<CombinedPluginType[]>([]);
   const client = useSupabaseClient<Database>();
   const router = useRouter();
+  const timeout = useRef<any>();
 
   useEffect(() => {
     setCategories(Object.values(PluginCategories).sort());
   }, []);
 
-  useEffect(() => {
-    const { category = "", query = "" } = router.query || {};
-    setSearchInput(query as string);
-    console.log("Query params updated:", category, query);
-
-    setSearching(true);
-    search();
-  }, [router.query]);
-
-  const handleSearchInput = async () => {
-    if (searching) {
-      return;
-    }
-
-    const category = (router.query.category || "") as string;
-    await router.replace(
-      `/search?query=${encodeURIComponent(searchInput)}${
-        category ? "&category=" + encodeURIComponent(category) : ""
-      }`
-    );
-  };
-
   const search = async () => {
     const { category = "", query = "" }: { category?: string; query?: string } =
-      router.query || {};
+    router.query || {};
     let supabaseQuery = client
       .from("package")
       .select(
@@ -78,6 +57,36 @@ export default function Search() {
 
     setPlugins((data || []) as CombinedPluginType[]);
     setSearching(false);
+  };
+
+
+  useEffect(() => {
+    const { category = "", query = "" } = router.query || {};
+    setSearchInput(query as string);
+    console.log("Query params updated:", category, query);
+
+    if (timeout.current) {
+      clearTimeout(timeout.current);
+    }
+
+    setSearching(true);
+    timeout.current = setTimeout(async () => {
+      await search();
+      timeout.current = null;
+    }, 1000);
+  }, [router.query]);
+
+  const handleSearchInput = async () => {
+    if (searching) {
+      return;
+    }
+
+    const category = (router.query.category || "") as string;
+    await router.replace(
+      `/search?query=${encodeURIComponent(searchInput)}${
+        category ? "&category=" + encodeURIComponent(category) : ""
+      }`
+    );
   };
 
   return (
