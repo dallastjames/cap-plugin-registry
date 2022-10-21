@@ -1,9 +1,13 @@
+import { PluginList } from "@/components/plugin-list/plugin-list";
+import { CombinedPluginType } from "@/components/plugin-list/plugin-list-item";
 import { SearchInput } from "@/components/search-input";
+import { Database } from "@/utils/db-definitions";
 import { PluginCategories } from "@/utils/enums/categories";
 import styled from "@emotion/styled";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, Typography } from "@mui/joy";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -13,6 +17,8 @@ export default function Search() {
   const [searchInput, setSearchInput] = useState<string>("");
   const [searching, setSearching] = useState<boolean>(false);
   const [categories, setCategories] = useState<string[]>([]);
+  const [plugins, setPlugins] = useState<CombinedPluginType[]>([]);
+  const client = useSupabaseClient<Database>();
   const router = useRouter();
 
   useEffect(() => {
@@ -20,9 +26,12 @@ export default function Search() {
   }, []);
 
   useEffect(() => {
-    const { keyword = "", query = "" } = router.query || {};
+    const { category = "", query = "" } = router.query || {};
     setSearchInput(query as string);
-    console.log("Query params updated:", keyword, query);
+    console.log("Query params updated:", category, query);
+
+    setSearching(true);
+    search();
   }, [router.query]);
 
   const handleSearchInput = async () => {
@@ -30,13 +39,45 @@ export default function Search() {
       return;
     }
 
-    // setSearching(true);
-    const keyword = (router.query.keyword || "") as string;
+    const category = (router.query.category || "") as string;
     await router.replace(
       `/search?query=${encodeURIComponent(searchInput)}${
-        keyword ? "&keyword=" + encodeURIComponent(keyword) : ""
+        category ? "&category=" + encodeURIComponent(category) : ""
       }`
     );
+  };
+
+  const search = async () => {
+    const { category = "", query = "" }: { category?: string; query?: string } =
+      router.query || {};
+    let supabaseQuery = client
+      .from("package")
+      .select(
+        "package_id, name, category, keywords, package_details(like_count, rating_count, rating_sum)"
+      );
+
+    if (!!query) {
+      supabaseQuery = supabaseQuery.textSearch("fts", query);
+    }
+
+    // Find selected category enum value
+    const selectedCategory =
+      category &&
+      Object.entries(PluginCategories).find(([enumValue, prettyText]) => {
+        return prettyText === category;
+      })?.[0];
+
+    if (!!selectedCategory) {
+      supabaseQuery = supabaseQuery.eq("category", selectedCategory);
+    }
+
+    const { error, data, count } = await supabaseQuery.order("name", {
+      ascending: true,
+    });
+    console.log({ error, data, count });
+
+    setPlugins((data || []) as CombinedPluginType[]);
+    setSearching(false);
   };
 
   return (
@@ -57,15 +98,15 @@ export default function Search() {
             Categories
           </Typography>
           {categories.map((category) =>
-            router.query.keyword === category ? (
-              <AlreadySelectedKeywordContainer>
-                <strong key={category}>{category}</strong>
+            router.query.category === category ? (
+              <AlreadySelectedKeywordContainer key={category}>
+                <strong>{category}</strong>
                 <Link
                   href={`/search${
                     router.query.query ? "?query=" + router.query.query : ""
                   }`}
                 >
-                  <FontAwesomeIcon icon={faClose} className="remove-keyword" />
+                  <FontAwesomeIcon icon={faClose} className="remove-category" />
                 </Link>
               </AlreadySelectedKeywordContainer>
             ) : (
@@ -73,7 +114,7 @@ export default function Search() {
                 key={category}
                 href={`/search?${
                   router.query.query ? "query=" + router.query.query + "&" : ""
-                }keyword=${encodeURIComponent(category)}`}
+                }category=${encodeURIComponent(category)}`}
                 replace={true}
               >
                 {category}
@@ -82,29 +123,7 @@ export default function Search() {
           )}
         </KeywordsContainer>
         <ResultsContainer variant="outlined">
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
-          <div>Hello world</div>
+          <PluginList plugins={plugins} />
         </ResultsContainer>
       </ResultsAndKeywordsContainer>
     </SearchPageContainer>
@@ -144,7 +163,7 @@ const AlreadySelectedKeywordContainer = styled.div`
     flex-grow: 1;
   }
 
-  .remove-keyword {
+  .remove-category {
     display: inline;
     color: red;
     cursor: pointer;

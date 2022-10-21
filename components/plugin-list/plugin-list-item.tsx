@@ -1,4 +1,5 @@
 import { Database } from "@/utils/db-definitions";
+import { PluginCategories } from "@/utils/enums/categories";
 import { ListItem, ListItemContent, Typography } from "@mui/joy";
 
 export type CombinedPluginType =
@@ -20,7 +21,7 @@ export function PluginListItem({ plugin }: { plugin: CombinedPluginType }) {
       <ListItemContent>
         <Typography>{plugin.package_id}</Typography>
         <Typography level="body2">
-          Category: {plugin.category} | Keywords: {plugin.keywords.join(", ")}
+          Category: {PluginCategories[plugin.category] || ''} | Keywords: {plugin.keywords.join(", ")}
         </Typography>
       </ListItemContent>
     </ListItem>

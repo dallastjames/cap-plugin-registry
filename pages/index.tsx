@@ -48,17 +48,17 @@ const Home: NextPage = () => {
         <Typography level="h5" sx={{ mb: "5px" }}>
           Choose a Category
         </Typography>
-        <KeywordList>
+        <CategoryList>
           {keyWords.map((keyWord) => (
             <Link
               key={keyWord}
-              href={"/search?keyword=" + encodeURIComponent(keyWord)}
-              className="keyword-link"
+              href={"/search?category=" + encodeURIComponent(keyWord)}
+              className="category-link"
             >
               {keyWord}
             </Link>
           ))}
-        </KeywordList>
+        </CategoryList>
       </Card>
     </IndexContainer>
   );
@@ -81,11 +81,11 @@ const HeroImage = styled.div`
   position: relative;
 `;
 
-const KeywordList = styled.div`
+const CategoryList = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 
-  .keyword-link {
+  .category-link {
     justify-content: center;
   }
 `;
