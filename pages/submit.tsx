@@ -184,15 +184,17 @@ export default function SubmitPage() {
                           setCategoryValue(newValue as any)
                         }
                       >
-                        {Object.keys(PluginCategories).map((key) => (
-                          <Option key={key} value={key}>
-                            {
-                              PluginCategories[
-                                key as keyof typeof PluginCategories
-                              ]
-                            }
-                          </Option>
-                        ))}
+                        {Object.keys(PluginCategories)
+                          .sort()
+                          .map((key) => (
+                            <Option key={key} value={key}>
+                              {
+                                PluginCategories[
+                                  key as keyof typeof PluginCategories
+                                ]
+                              }
+                            </Option>
+                          ))}
                       </Select>
                     </FormControl>
                     <ChipInput
