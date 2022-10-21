@@ -1,4 +1,4 @@
-import { PluginLikeButton } from '@/components/like-buttons/plugin-like-button';
+import { PluginLikeButton } from "@/components/like-buttons/plugin-like-button";
 import { Database } from "@/utils/db-definitions";
 import { SiteColors } from "@/utils/theme";
 import styled from "@emotion/styled";
@@ -187,7 +187,12 @@ export default function ViewPackagePage() {
             </MultipleDetailSection>
           )}
           <LikeContainer>
-            <PluginLikeButton packageId={pluginId} likeCount={likeCount} likeChanged={setLikeCount} />
+            <PluginLikeButton
+              label="Upvote"
+              packageId={pluginId}
+              likeCount={likeCount}
+              likeChanged={setLikeCount}
+            />
           </LikeContainer>
         </DetailsContainer>
       )}

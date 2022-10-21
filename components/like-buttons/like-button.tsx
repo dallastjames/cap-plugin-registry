@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { faCircleUp as faCircleUpOutline } from "@fortawesome/free-regular-svg-icons";
 import { faCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "@mui/joy";
+import { Button, Typography } from "@mui/joy";
 
 export function LikeButton({
   count,
@@ -10,12 +10,14 @@ export function LikeButton({
   disabled = false,
   onLike,
   onUnlike,
+  label,
 }: {
   count?: number;
   active?: boolean;
   disabled?: boolean;
   onLike?: () => void;
   onUnlike?: () => void;
+  label?: string;
 }) {
   const handleClick = (e: MouseEvent) => {
     e.preventDefault();
@@ -36,6 +38,9 @@ export function LikeButton({
         fontFamily: "SF Mono",
       }}
     >
+      <Typography level="body1" color="primary" sx={{ marginRight: "6px" }}>
+        {label}
+      </Typography>
       <LikeIcon icon={active ? faCircleUp : faCircleUpOutline} />
       {count}
     </Button>

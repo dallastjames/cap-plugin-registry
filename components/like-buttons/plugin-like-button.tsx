@@ -8,6 +8,7 @@ type Props = {
   likeCount: number;
   likeChanged?: (likeCount: number) => void;
   disabled?: boolean;
+  label?: string;
 };
 
 export const PluginLikeButton: FC<Props> = ({
@@ -15,6 +16,7 @@ export const PluginLikeButton: FC<Props> = ({
   likeChanged,
   disabled,
   packageId,
+  label,
 }) => {
   const [liked, setLiked] = useState<boolean>(false);
   const user = useUser();
@@ -94,6 +96,7 @@ export const PluginLikeButton: FC<Props> = ({
 
   return (
     <LikeButton
+      label={label}
       disabled={disabled}
       count={likeCount}
       active={liked}
