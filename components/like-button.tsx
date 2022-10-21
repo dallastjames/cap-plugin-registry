@@ -1,8 +1,8 @@
-import { faCircleUp } from "@fortawesome/free-solid-svg-icons";
-import { faCircleUp as faCircleUpOutline } from "@fortawesome/free-regular-svg-icons";
-import { Button } from "@mui/joy";
 import styled from "@emotion/styled";
+import { faCircleUp as faCircleUpOutline } from "@fortawesome/free-regular-svg-icons";
+import { faCircleUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button } from "@mui/joy";
 
 export function LikeButton({
   count,
@@ -17,11 +17,21 @@ export function LikeButton({
   onLike?: () => void;
   onUnlike?: () => void;
 }) {
+  const handleClick = (e: MouseEvent) => {
+    e.preventDefault();
+
+    if (active) {
+      onUnlike?.();
+    } else {
+      onLike?.();
+    }
+  };
+
   return (
     <Button
       variant="plain"
       disabled={disabled}
-      onClick={() => (active ? onUnlike?.() : onLike?.())}
+      onClick={(e) => handleClick(e as unknown as MouseEvent)}
       sx={{
         fontFamily: "SF Mono",
       }}
