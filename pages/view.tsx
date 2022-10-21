@@ -1,11 +1,15 @@
 import { Database } from "@/utils/db-definitions";
+import { SiteColors } from '@/utils/theme';
+import styled from "@emotion/styled";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CircularProgress, Link, Typography } from "@mui/joy";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import remarkEmoji from 'remark-emoji';
+import ReactMarkdown from "react-markdown";
+import remarkEmoji from "remark-emoji";
+import remarkGfm from "remark-gfm";
 
 export default function ViewPackagePage() {
   const [pluginId, setPluginId] = useState<string>("");
@@ -17,6 +21,7 @@ export default function ViewPackagePage() {
   const [loadingReadMe, setLoadingReadMe] = useState<boolean>(true);
   const [registryPackageInfo, setRegistryPackageInfo] = useState<any>();
   const [packageInfo, setPackageInfo] = useState<any>();
+  const [repo, setRepo] = useState<string>("");
   const [readMe, setReadMe] = useState<string>();
   const router = useRouter();
   const client = useSupabaseClient<Database>();
@@ -69,6 +74,8 @@ export default function ViewPackagePage() {
     // Try to load README from GitHub
     const { url, type } = packageInfo?.repository || {};
     setLoadingReadMe(true);
+    setReadMe(undefined);
+    setRepo("");
     if (type !== "git" || !packageInfo.gitHead) {
       // Currently only supporting GitHub readmes
       setLoadingReadMe(false);
@@ -82,6 +89,7 @@ export default function ViewPackagePage() {
       return;
     }
 
+    setRepo(repoUrl);
     const readmeUrl = `https://raw.githubusercontent.com/${repoUrl}/${head}/README.md`;
     fetch(readmeUrl).then((res) => {
       if (res.status !== 200) {
@@ -117,9 +125,91 @@ export default function ViewPackagePage() {
 
   return (
     <>
-      <Typography level="h2">{plugin.name || plugin.package_id}</Typography>
-      <Typography level="body2">{plugin.package_id}</Typography>
-      <ReactMarkdown remarkPlugins={[remarkGfm, remarkEmoji]}>{readMe || ''}</ReactMarkdown>
+      <ContentContainer>
+        <ReadMeContainer>
+          <Typography level="h3">{plugin.name || plugin.package_id}</Typography>
+          <code>{plugin.package_id}</code>
+          <MarkdownContainer>
+            <ReactMarkdown remarkPlugins={[remarkGfm, remarkEmoji]}>
+              {readMe || ""}
+            </ReactMarkdown>
+          </MarkdownContainer>
+        </ReadMeContainer>
+        <DetailsContainer>
+          <DetailSection>
+            <DetailHeader>Install</DetailHeader>
+            <code>npm install {plugin.package_id}</code>
+          </DetailSection>
+          {repo && (
+            <DetailSection>
+              <DetailHeader>Repository</DetailHeader>
+              <a href={`https://github.com/${repo}`} target="_blank" rel="noreferrer">
+                <FontAwesomeIcon icon={faGithub} /> github.com{repo}
+              </a>
+            </DetailSection>
+          )}
+        </DetailsContainer>
+      </ContentContainer>
     </>
   );
 }
+
+const ContentContainer = styled.div`
+  display: flex;
+  flex: 1;
+  gap: 20px;
+
+  code {
+    padding: 10px;
+    background-color: #f6f7fa;
+    border-radius: 8px;
+  }
+
+  table,
+  th,
+  td {
+    border: 1px solid #e5e8ed;
+    padding: 10px;
+    border-collapse: collapse;
+  }
+`;
+
+const ReadMeContainer = styled.div`
+  flex: 1;
+`;
+
+const DetailsContainer = styled.div`
+  min-width: 300px;
+`;
+
+const MarkdownContainer = styled.div`
+  h1 {
+    font-size: 22px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: 16px;
+  }
+`;
+
+const DetailSection = styled.div`
+  border-bottom: 1px solid #e5e8ed;
+  padding-bottom: 15px;
+  
+  a {
+    color: ${SiteColors.LABEL};
+    text-decoration: none;
+  }
+`;
+
+const DetailHeader = styled.h3``;
