@@ -1,5 +1,5 @@
 import { Database } from "@/utils/db-definitions";
-import { SiteColors } from '@/utils/theme';
+import { SiteColors } from "@/utils/theme";
 import styled from "@emotion/styled";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,6 +22,8 @@ export default function ViewPackagePage() {
   const [registryPackageInfo, setRegistryPackageInfo] = useState<any>();
   const [packageInfo, setPackageInfo] = useState<any>();
   const [repo, setRepo] = useState<string>("");
+  const [version, setVersion] = useState<string>("");
+  const [license, setLicense] = useState<string>("");
   const [readMe, setReadMe] = useState<string>();
   const router = useRouter();
   const client = useSupabaseClient<Database>();
@@ -76,6 +78,8 @@ export default function ViewPackagePage() {
     setLoadingReadMe(true);
     setReadMe(undefined);
     setRepo("");
+    setVersion("");
+    setLicense("");
     if (type !== "git" || !packageInfo.gitHead) {
       // Currently only supporting GitHub readmes
       setLoadingReadMe(false);
@@ -83,6 +87,8 @@ export default function ViewPackagePage() {
     }
 
     const head = packageInfo.gitHead;
+    setVersion(packageInfo.version || "");
+    setLicense(packageInfo.license || "");
     const repoUrl = url?.match(/github.com(.+).git/)?.[1];
     if (!repoUrl || !head) {
       setLoadingReadMe(false);
@@ -142,10 +148,26 @@ export default function ViewPackagePage() {
           {repo && (
             <DetailSection>
               <DetailHeader>Repository</DetailHeader>
-              <a href={`https://github.com/${repo}`} target="_blank" rel="noreferrer">
+              <a
+                href={`https://github.com/${repo}`}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <FontAwesomeIcon icon={faGithub} /> github.com{repo}
               </a>
             </DetailSection>
+          )}
+          {version && (
+            <MultipleDetailSection>
+              <DetailSection>
+                <DetailHeader>Version</DetailHeader>
+                {version}
+              </DetailSection>
+              <DetailSection>
+                <DetailHeader>License</DetailHeader>
+                {license || "Unknown"}
+              </DetailSection>
+            </MultipleDetailSection>
           )}
         </DetailsContainer>
       </ContentContainer>
@@ -205,7 +227,8 @@ const MarkdownContainer = styled.div`
 const DetailSection = styled.div`
   border-bottom: 1px solid #e5e8ed;
   padding-bottom: 15px;
-  
+  flex-grow: 1;
+
   a {
     color: ${SiteColors.LABEL};
     text-decoration: none;
@@ -213,3 +236,7 @@ const DetailSection = styled.div`
 `;
 
 const DetailHeader = styled.h3``;
+
+const MultipleDetailSection = styled.div`
+  display: flex;
+`;
