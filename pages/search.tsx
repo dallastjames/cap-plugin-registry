@@ -86,6 +86,7 @@ export default function Search() {
   useEffect(() => {
     const { query = "" } = router.query || {};
     setSearchInput(query as string);
+    setPage(0);
     deferSearch();
   }, [router.query]);
 
