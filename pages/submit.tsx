@@ -16,6 +16,7 @@ import {
 } from "@mui/joy";
 import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -100,6 +101,9 @@ export default function SubmitPage() {
 
   return (
     <Layout>
+      <Head>
+        <title>Submit Plugin | Capacitor Plugin Registry</title>
+      </Head>
       <SearchInputBox>
         <Card variant="soft">
           <CardContent>
