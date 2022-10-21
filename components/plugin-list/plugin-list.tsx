@@ -4,7 +4,7 @@ import { CombinedPluginType, PluginListItem } from "./plugin-list-item";
 
 export function PluginList({
   plugins,
-  enableLike = false,
+  enableLike,
 }: {
   plugins: CombinedPluginType[];
   enableLike?: boolean;

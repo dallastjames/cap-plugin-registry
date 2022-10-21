@@ -79,7 +79,7 @@ export function MyPlugins() {
       {searching ? (
         <LoadingIcon icon={faSpinner} className="fa-spin" />
       ) : pluginList.length > 0 ? (
-        <PluginList plugins={pluginList} enableLike={true} />
+        <PluginList plugins={pluginList} />
       ) : (
         <Alert
           color="warning"

@@ -21,7 +21,7 @@ export type CombinedPluginType =
 
 export function PluginListItem({
   plugin,
-  enableLike = false,
+  enableLike = true,
 }: {
   plugin: CombinedPluginType;
   enableLike?: boolean;
