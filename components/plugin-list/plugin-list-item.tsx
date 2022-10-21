@@ -119,6 +119,9 @@ export function PluginListItem({
 }
 
 const ListItemLink = styled(Link)`
+  display: flex;
+  flex: 1;
+  
   &:hover {
     text-decoration: none;
   }
@@ -126,6 +129,7 @@ const ListItemLink = styled(Link)`
 
 const ListItemLayout = styled.div`
   display: flex;
+  flex: 1;
 `;
 
 const ListItemLeft = styled.div`
