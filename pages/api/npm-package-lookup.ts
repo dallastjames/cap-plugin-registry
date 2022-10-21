@@ -14,13 +14,14 @@ export default async function handler(
     res.status(METHOD_NOT_ALLOWED).send({ error: "Method Not Allowed" });
     return;
   }
-  const packageId = req.query?.packageId ?? null;
-  if (!packageId) {
+  let packageId = req.query?.packageId ?? null;
+  if (!packageId || typeof packageId !== "string") {
     res
       .status(BAD_REQUEST)
       .send({ error: "Package ID query param is required" });
     return;
   }
+  packageId = packageId.toLowerCase().trim();
   const npmRes = await fetch(`https://registry.npmjs.com/${packageId}/latest`, {
     method: "GET",
   });
