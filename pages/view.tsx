@@ -1,3 +1,4 @@
+import { LikeButton } from "@/components/like-button";
 import { Database } from "@/utils/db-definitions";
 import { SiteColors } from "@/utils/theme";
 import styled from "@emotion/styled";
@@ -5,6 +6,7 @@ import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CircularProgress, Link, Typography } from "@mui/joy";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -33,7 +35,6 @@ export default function ViewPackagePage() {
       return;
     }
 
-    console.log("Fetch called", pluginId);
     setLoadingRegistryDetails(true);
     setLoadingPackageDetails(true);
     (async () => {
@@ -110,15 +111,23 @@ export default function ViewPackagePage() {
 
   if (loadingRegistryDetails || loadingPackageDetails) {
     return (
-      <h1>
-        Loading <CircularProgress color="primary" variant="soft" size="sm" />
-      </h1>
+      <>
+        <Head>
+          <title>Plugin Loading | Capacitor Plugin Registry </title>
+        </Head>
+        <h1>
+          Loading <CircularProgress color="primary" variant="soft" size="sm" />
+        </h1>
+      </>
     );
   }
 
   if (!loadingRegistryDetails && !plugin) {
     return (
       <>
+        <Head>
+          <title>Plugin Not Found | Capacitor Plugin Registry </title>
+        </Head>
         <h1>Package not found</h1>
         <p>
           This package was not found in our registry.
@@ -131,16 +140,21 @@ export default function ViewPackagePage() {
   }
 
   return (
-    <>
-      <ContentContainer>
-        <ReadMeContainer>
-          <Typography level="h3">{plugin.name || plugin.package_id}</Typography>
-          <MarkdownContainer>
-            <ReactMarkdown remarkPlugins={[remarkGfm, remarkEmoji]}>
-              {readMe || ""}
-            </ReactMarkdown>
-          </MarkdownContainer>
-        </ReadMeContainer>
+    <ContentContainer>
+      <Head>
+        <title>
+          {plugin.name || plugin.package_id} | Capacitor Plugin Registry{" "}
+        </title>
+      </Head>
+      <ReadMeContainer>
+        <Typography level="h3">{plugin.name || plugin.package_id}</Typography>
+        <MarkdownContainer>
+          <ReactMarkdown remarkPlugins={[remarkGfm, remarkEmoji]}>
+            {readMe || ""}
+          </ReactMarkdown>
+        </MarkdownContainer>
+      </ReadMeContainer>
+      {!loadingRegistryDetails && (
         <DetailsContainer>
           <DetailSection>
             <DetailHeader>Install</DetailHeader>
@@ -170,9 +184,10 @@ export default function ViewPackagePage() {
               </DetailSection>
             </MultipleDetailSection>
           )}
+          <LikeButton plugin={plugin} />
         </DetailsContainer>
-      </ContentContainer>
-    </>
+      )}
+    </ContentContainer>
   );
 }
 
