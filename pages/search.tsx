@@ -1,8 +1,10 @@
+import { Paginator } from "@/components/paginator/paginator";
 import { PluginList } from "@/components/plugin-list/plugin-list";
 import { CombinedPluginType } from "@/components/plugin-list/plugin-list-item";
 import { SearchInput } from "@/components/search-input";
 import { Database } from "@/utils/db-definitions";
 import { PluginCategories } from "@/utils/enums/categories";
+import { getPagination } from "@/utils/pagination";
 import styled from "@emotion/styled";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,6 +20,9 @@ export default function Search() {
   const [searching, setSearching] = useState<boolean>(false);
   const [categories, setCategories] = useState<string[]>([]);
   const [plugins, setPlugins] = useState<CombinedPluginType[]>([]);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [pageCount, setPageCount] = useState<number>(0);
+  const [page, setPage] = useState<number>(0);
   const client = useSupabaseClient<Database>();
   const router = useRouter();
   const timeout = useRef<any>();
@@ -29,11 +34,14 @@ export default function Search() {
   const search = async () => {
     const { category = "", query = "" }: { category?: string; query?: string } =
       router.query || {};
+    const { from, to } = getPagination(page, pageSize);
     let supabaseQuery = client
       .from("package")
       .select(
-        "package_id, name, category, keywords, package_details(like_count, rating_count, rating_sum)"
-      );
+        "package_id, name, category, keywords, package_details(like_count, rating_count, rating_sum)",
+        { count: "exact" }
+      )
+      .range(from, to);
 
     if (!!query) {
       supabaseQuery = supabaseQuery.textSearch("fts", query);
@@ -58,15 +66,12 @@ export default function Search() {
       .order("name", { ascending: true })
       .returns<CombinedPluginType>();
 
+    setPageCount(Math.ceil((count || 0) / pageSize));
     setPlugins(data || []);
     setSearching(false);
   };
 
-  useEffect(() => {
-    const { category = "", query = "" } = router.query || {};
-    setSearchInput(query as string);
-    console.log("Query params updated:", category, query);
-
+  const deferSearch = () => {
     if (timeout.current) {
       clearTimeout(timeout.current);
     }
@@ -76,7 +81,17 @@ export default function Search() {
       await search();
       timeout.current = null;
     }, 1000);
+  };
+
+  useEffect(() => {
+    const { query = "" } = router.query || {};
+    setSearchInput(query as string);
+    deferSearch();
   }, [router.query]);
+
+  useEffect(() => {
+    deferSearch();
+  }, [page]);
 
   const handleSearchInput = async () => {
     if (searching) {
@@ -135,6 +150,7 @@ export default function Search() {
         </KeywordsContainer>
         <ResultsContainer variant="outlined">
           <PluginList plugins={plugins} />
+          <Paginator page={page} pageCount={pageCount} setPage={setPage} />
         </ResultsContainer>
       </ResultsAndKeywordsContainer>
     </SearchPageContainer>
