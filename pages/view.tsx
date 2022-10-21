@@ -184,7 +184,6 @@ export default function ViewPackagePage() {
               </DetailSection>
             </MultipleDetailSection>
           )}
-          <LikeButton plugin={plugin} />
         </DetailsContainer>
       )}
     </ContentContainer>
