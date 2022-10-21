@@ -1,13 +1,7 @@
 import { Database } from "@/utils/db-definitions";
 import { PluginCategories } from "@/utils/enums/categories";
 import styled from "@emotion/styled";
-import { faHeart, faCircleUp } from "@fortawesome/free-solid-svg-icons";
-import {
-  faHeart as faHeartOutline,
-  faCircleUp as faCircleUpOutline,
-} from "@fortawesome/free-regular-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, ListItem, ListItemContent, Typography } from "@mui/joy";
+import { Link, ListItem, ListItemContent, Typography } from "@mui/joy";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import { LikeButton } from "../like-button";
@@ -95,28 +89,40 @@ export function PluginListItem({
   return (
     <ListItem>
       <ListItemContent>
-        <ListItemLayout>
-          <ListItemLeft>
-            <Typography>{plugin.package_id}</Typography>
-            <Typography level="body2">
-              Category: {PluginCategories[plugin.category] || ""} | Keywords:{" "}
-              {plugin.keywords.length > 0 ? plugin.keywords.join(", ") : "None"}
-            </Typography>
-          </ListItemLeft>
-          <LikeContainer>
-            <LikeButton
-              disabled={!enableLike}
-              count={details.like_count + interactionCount}
-              active={liked}
-              onLike={() => likePlugin()}
-              onUnlike={() => unlikePlugin()}
-            />
-          </LikeContainer>
-        </ListItemLayout>
+        <ListItemLink
+          href={`/view?id=${encodeURIComponent(plugin.package_id)}`}
+        >
+          <ListItemLayout>
+            <ListItemLeft>
+              <Typography>{plugin.package_id}</Typography>
+              <Typography level="body2">
+                Category: {PluginCategories[plugin.category] || ""} | Keywords:{" "}
+                {plugin.keywords.length > 0
+                  ? plugin.keywords.join(", ")
+                  : "None"}
+              </Typography>
+            </ListItemLeft>
+            <LikeContainer>
+              <LikeButton
+                disabled={!enableLike}
+                count={details.like_count + interactionCount}
+                active={liked}
+                onLike={() => likePlugin()}
+                onUnlike={() => unlikePlugin()}
+              />
+            </LikeContainer>
+          </ListItemLayout>
+        </ListItemLink>
       </ListItemContent>
     </ListItem>
   );
 }
+
+const ListItemLink = styled(Link)`
+  &:hover {
+    text-decoration: none;
+  }
+`;
 
 const ListItemLayout = styled.div`
   display: flex;
