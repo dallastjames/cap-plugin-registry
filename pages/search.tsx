@@ -11,7 +11,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Search() {
   const [searchInput, setSearchInput] = useState<string>("");
@@ -28,7 +28,7 @@ export default function Search() {
 
   const search = async () => {
     const { category = "", query = "" }: { category?: string; query?: string } =
-    router.query || {};
+      router.query || {};
     let supabaseQuery = client
       .from("package")
       .select(
@@ -50,15 +50,17 @@ export default function Search() {
       supabaseQuery = supabaseQuery.eq("category", selectedCategory);
     }
 
-    const { error, data, count } = await supabaseQuery.order("name", {
-      ascending: true,
-    });
-    console.log({ error, data, count });
+    const { error, data, count } = await supabaseQuery
+      .order("like_count", {
+        foreignTable: "package_details",
+        ascending: false,
+      })
+      .order("name", { ascending: true })
+      .returns<CombinedPluginType>();
 
-    setPlugins((data || []) as CombinedPluginType[]);
+    setPlugins(data || []);
     setSearching(false);
   };
-
 
   useEffect(() => {
     const { category = "", query = "" } = router.query || {};
