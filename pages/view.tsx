@@ -211,6 +211,12 @@ const ContentContainer = styled.div`
     padding: 10px;
     border-collapse: collapse;
   }
+  
+  blockquote {
+    border-left: 4px solid #e5e8ed;
+    margin-left: 0;
+    padding-left: 20px;
+  }
 `;
 
 const ReadMeContainer = styled.div`
