@@ -149,7 +149,11 @@ export default function Search() {
           )}
         </KeywordsContainer>
         <ResultsContainer variant="outlined">
-          <PluginList plugins={plugins} />
+          {searching || plugins.length ? (
+            <PluginList plugins={plugins} />
+          ) : (
+            <>No plugins found that meet your search criteria.</>
+          )}
           <Paginator page={page} pageCount={pageCount} setPage={setPage} />
         </ResultsContainer>
       </ResultsAndKeywordsContainer>
