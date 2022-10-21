@@ -1,5 +1,7 @@
+import { ChipInput } from "@/components/chip-input";
 import { SearchInput } from "@/components/search-input";
 import { Database } from "@/utils/db-definitions";
+import { PluginCategories } from "@/utils/enums/categories";
 import { CREATED, SUCCESS } from "@/utils/http-codes";
 import { SiteColors } from "@/utils/theme";
 import styled from "@emotion/styled";
@@ -11,9 +13,13 @@ import {
   Button,
   Card,
   CardContent,
+  FormLabel,
   Input,
+  Option,
+  Select,
   Typography,
 } from "@mui/joy";
+import FormControl from "@mui/joy/FormControl";
 import { withPageAuth } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import Head from "next/head";
@@ -31,9 +37,23 @@ export default function SubmitPage() {
   const [submitting, setSubmitting] = useState(false);
   const [alreadyExists, setAlreadyExists] = useState(false);
   const [isMaintainer, setIsMaintainer] = useState(false);
+  const [categoryValue, setCategoryValue] = useState<
+    keyof typeof PluginCategories | null
+  >(null);
+  const [keywordsValue, setKeywordsValue] = useState<string[]>([]);
+  const [nameValue, setNameValue] = useState("");
+  const [namePlaceholder, setNamePlaceholder] = useState("");
+
+  const resetUploadParams = () => {
+    setCategoryValue(null);
+    setKeywordsValue([]);
+    setNameValue("");
+    setNamePlaceholder("");
+  };
 
   const handleSearch = async () => {
     if (!user) return;
+    resetUploadParams();
     setError("");
     setSearching(true);
     setPackageInfo(null);
@@ -52,6 +72,8 @@ export default function SubmitPage() {
         .eq("package_id", packageId);
       if (error) throw error;
       setPackageInfo(packageData);
+      setNamePlaceholder(packageId);
+      setKeywordsValue(packageData?.keywords ?? []);
       setIsMaintainer(
         packageData?.maintainers?.find(
           (m: { name: string; email: string }) => m.email === user.email
@@ -83,6 +105,9 @@ export default function SubmitPage() {
 
     const params = new URLSearchParams();
     params.append("packageId", packageId);
+    params.append("keywords", keywordsValue.join(","));
+    params.append("category", categoryValue ?? "");
+    params.append("name", nameValue);
 
     const res = await fetch(`/api/submit-npm-package`, {
       method: "POST",
@@ -92,6 +117,7 @@ export default function SubmitPage() {
     if (res.status !== CREATED) {
       setError((await res.json()).error ?? "Submit Error");
       setSubmitting(false);
+      return;
     }
 
     setTimeout(() => {
@@ -136,6 +162,50 @@ export default function SubmitPage() {
             />
             {packageInfo && (
               <>
+                {!alreadyExists ? (
+                  <>
+                    <Typography level="h5" sx={{ margin: "20px auto 0" }}>
+                      Plugin Details
+                    </Typography>
+                    <FormControl sx={{ marginBottom: "12px" }}>
+                      <FormLabel>Plugin Name</FormLabel>
+                      <Input
+                        placeholder={namePlaceholder}
+                        value={nameValue}
+                        onChange={(e) => setNameValue(e.target.value)}
+                      />
+                    </FormControl>
+                    <FormControl sx={{ marginBottom: "12px" }}>
+                      <FormLabel>Category</FormLabel>
+                      <Select
+                        defaultValue=""
+                        placeholder="Select Category"
+                        onChange={(e, newValue) =>
+                          setCategoryValue(newValue as any)
+                        }
+                      >
+                        {Object.keys(PluginCategories).map((key) => (
+                          <Option key={key} value={key}>
+                            {
+                              PluginCategories[
+                                key as keyof typeof PluginCategories
+                              ]
+                            }
+                          </Option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <ChipInput
+                      label="Keywords"
+                      placeholder="Add Keyword"
+                      value={keywordsValue}
+                      onChange={(e) => setKeywordsValue(e)}
+                    />
+                  </>
+                ) : (
+                  <></>
+                )}
+
                 <ConfirmText level="body3">
                   {alreadyExists
                     ? "This package already exists in the registry, click below to view this plugin"

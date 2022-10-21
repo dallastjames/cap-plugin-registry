@@ -18,6 +18,7 @@ export interface Database {
           user_id: string
           keywords: string[]
           fts: unknown | null
+          sys_keywords: string[]
         }
         Insert: {
           package_id: string
@@ -27,6 +28,7 @@ export interface Database {
           user_id?: string
           keywords?: string[]
           fts?: unknown | null
+          sys_keywords?: string[]
         }
         Update: {
           package_id?: string
@@ -36,6 +38,7 @@ export interface Database {
           user_id?: string
           keywords?: string[]
           fts?: unknown | null
+          sys_keywords?: string[]
         }
       }
       package_details: {

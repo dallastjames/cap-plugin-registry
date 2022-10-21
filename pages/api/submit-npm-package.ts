@@ -8,8 +8,9 @@ import {
   SERVER_ERROR,
   UNAUTHORIZED,
 } from "@/utils/http-codes";
-import { SupabaseClient, withApiAuth } from "@supabase/auth-helpers-nextjs";
+import { withApiAuth } from "@supabase/auth-helpers-nextjs";
 import { NextApiRequest, NextApiResponse } from "next";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 export default withApiAuth(async function handler(
   req: NextApiRequest,
@@ -22,7 +23,7 @@ export default withApiAuth(async function handler(
   }
 
   let packageId: string = req.body.packageId;
-  let keywords: string[] = req.body.keywords;
+  let keywords: string[] = (req.body.keywords ?? "").split(",");
   let category: keyof typeof PluginCategories = req.body.category;
   let name = req.body.name;
 
@@ -100,7 +101,7 @@ export default withApiAuth(async function handler(
     package_id: packageId,
     user_id: data.user.id,
     keywords,
-    // systemKeywords,
+    sys_keywords: systemKeywords,
     category,
     name,
   });
