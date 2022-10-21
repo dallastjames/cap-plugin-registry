@@ -1,4 +1,4 @@
-import { LikeButton } from "@/components/like-button";
+import { PluginLikeButton } from '@/components/like-buttons/plugin-like-button';
 import { Database } from "@/utils/db-definitions";
 import { SiteColors } from "@/utils/theme";
 import styled from "@emotion/styled";
@@ -27,6 +27,7 @@ export default function ViewPackagePage() {
   const [version, setVersion] = useState<string>("");
   const [license, setLicense] = useState<string>("");
   const [readMe, setReadMe] = useState<string>();
+  const [likeCount, setLikeCount] = useState<number>(0);
   const router = useRouter();
   const client = useSupabaseClient<Database>();
 
@@ -44,6 +45,7 @@ export default function ViewPackagePage() {
         .eq("package_id", pluginId);
       setLoadingRegistryDetails(false);
       setPlugin(data?.[0]);
+      setLikeCount((data?.[0] as any)?.package_details?.[0]?.like_count || 0);
     })();
 
     (async () => {
@@ -184,6 +186,9 @@ export default function ViewPackagePage() {
               </DetailSection>
             </MultipleDetailSection>
           )}
+          <LikeContainer>
+            <PluginLikeButton packageId={pluginId} likeCount={likeCount} likeChanged={setLikeCount} />
+          </LikeContainer>
         </DetailsContainer>
       )}
     </ContentContainer>
@@ -210,7 +215,7 @@ const ContentContainer = styled.div`
     padding: 10px;
     border-collapse: collapse;
   }
-  
+
   blockquote {
     border-left: 4px solid #e5e8ed;
     margin-left: 0;
@@ -261,4 +266,9 @@ const DetailHeader = styled.h3``;
 
 const MultipleDetailSection = styled.div`
   display: flex;
+`;
+
+const LikeContainer = styled.div`
+  text-align: left;
+  margin-top: 10px;
 `;

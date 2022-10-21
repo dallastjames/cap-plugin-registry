@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { Link, ListItem, ListItemContent, Typography } from "@mui/joy";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
-import { LikeButton } from "../like-button";
+import { LikeButton } from "../like-buttons/like-button";
 
 export type CombinedPluginType =
   Database["public"]["Tables"]["package"]["Row"] & {
