@@ -29,7 +29,7 @@ export default function Account() {
         <title>Account | Capacitor Plugin Registry</title>
       </Head>
       <PackageSection>
-        <Card>
+        <Card variant="outlined">
           <CardContent>
             <MyPlugins />
           </CardContent>
@@ -77,6 +77,7 @@ const ProfileSection = styled(Card)`
   display: flex;
   flex-direction: column;
   width: 360px;
+  height: 100%;
 `;
 
 const LogoutButtonContainer = styled.div`
