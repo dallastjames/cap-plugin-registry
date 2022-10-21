@@ -20,7 +20,7 @@ const Home: NextPage = () => {
   }, []);
 
   const handleSearch = async () => {
-    if (!searchInput || searching) {
+    if (searching) {
       return;
     }
 
