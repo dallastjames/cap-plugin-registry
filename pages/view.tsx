@@ -104,10 +104,11 @@ export default function ViewPackagePage() {
       }
 
       res.text().then(setReadMe);
+      setLoadingReadMe(false);
     });
   }, [packageInfo]);
 
-  if (loadingRegistryDetails) {
+  if (loadingRegistryDetails || loadingPackageDetails) {
     return (
       <h1>
         Loading <CircularProgress color="primary" variant="soft" size="sm" />
@@ -180,6 +181,7 @@ const ContentContainer = styled.div`
   flex: 1;
   gap: 20px;
   margin-top: 20px;
+  padding: 0 40px;
 
   code {
     padding: 10px;
