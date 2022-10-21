@@ -1,6 +1,9 @@
 import { SearchInput } from "@/components/search-input";
 import { SUCCESS } from "@/utils/http-codes";
+import { SiteColors } from "@/utils/theme";
 import styled from "@emotion/styled";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Alert,
   Box,
@@ -11,20 +14,23 @@ import {
   Typography,
 } from "@mui/joy";
 import { withPageAuth } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function SubmitPage() {
+  const router = useRouter();
   const [searchInput, setSearchInput] = useState<string>("");
   const [searching, setSearching] = useState<boolean>(false);
   const [error, setError] = useState("");
   const [packageInfo, setPackageInfo] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSearch = async () => {
     setError("");
     setSearching(true);
     setPackageInfo(null);
     const params = new URLSearchParams();
-    params.append("packageId", searchInput);
+    params.append("packageId", searchInput.toLowerCase());
     const res = await fetch(`/api/npm-package-lookup?${params.toString()}`);
     if (res.status === SUCCESS) {
       setPackageInfo(await res.json());
@@ -32,6 +38,17 @@ export default function SubmitPage() {
       setError((await res.json()).error ?? "Query Error");
     }
     setSearching(false);
+  };
+
+  const submitToRegistry = async (packageId: string) => {
+    if (submitting) return;
+    setSubmitting(true);
+
+    setTimeout(() => {
+      const params = new URLSearchParams();
+      params.append("id", packageId.toLowerCase());
+      router.push(`/view?${params.toString()}`);
+    }, 2000);
   };
 
   return (
@@ -64,6 +81,24 @@ export default function SubmitPage() {
               handleSearch={handleSearch}
               searching={searching}
             />
+            {packageInfo && (
+              <>
+                <ConfirmText level="body3">
+                  If the package shown is what you are expecting, click submit
+                  below to add it to the plugin registry
+                </ConfirmText>
+                <Button
+                  variant="solid"
+                  onClick={() => submitToRegistry(searchInput)}
+                >
+                  {submitting ? (
+                    <LoadingIcon icon={faSpinner} className="fa-spin" />
+                  ) : (
+                    "Submit Plugin"
+                  )}
+                </Button>
+              </>
+            )}
           </CardContent>
         </Card>
       </SearchInputBox>
@@ -95,11 +130,14 @@ const Layout = styled.div`
   gap: 20px;
 `;
 
-const SearchInputBox = styled.div``;
+const SearchInputBox = styled.div`
+  max-width: 400px;
+  width: 400px;
+`;
 
 const ResultsBox = styled.div`
   flex: 1;
-  overflow: scroll;
+  overflow: hidden;
 `;
 
 const RequirementsList = styled.ol`
@@ -108,4 +146,12 @@ const RequirementsList = styled.ol`
 
 const PackageDetailsOutput = styled.pre`
   white-space: pre-wrap;
+`;
+
+const ConfirmText = styled(Typography)`
+  margin: 32px 0 12px;
+`;
+
+const LoadingIcon = styled(FontAwesomeIcon)`
+  font-size: 24px;
 `;
