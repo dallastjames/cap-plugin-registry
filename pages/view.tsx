@@ -128,7 +128,6 @@ export default function ViewPackagePage() {
       <ContentContainer>
         <ReadMeContainer>
           <Typography level="h3">{plugin.name || plugin.package_id}</Typography>
-          <code>{plugin.package_id}</code>
           <MarkdownContainer>
             <ReactMarkdown remarkPlugins={[remarkGfm, remarkEmoji]}>
               {readMe || ""}
@@ -158,6 +157,7 @@ const ContentContainer = styled.div`
   display: flex;
   flex: 1;
   gap: 20px;
+  margin-top: 20px;
 
   code {
     padding: 10px;
