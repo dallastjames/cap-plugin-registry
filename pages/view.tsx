@@ -101,40 +101,6 @@ export default function ViewPackagePage() {
     };
 
     getReadme();
-
-    // Try to load README from GitHub
-    // const { url, type } = packageInfo?.repository || {};
-    // setLoadingReadMe(true);
-    // setReadMe(undefined);
-    // setRepo("");
-    // setVersion("");
-    // setLicense("");
-    // if (type !== "git" || !packageInfo.gitHead) {
-    //   // Currently only supporting GitHub readmes
-    //   setLoadingReadMe(false);
-    //   return;
-    // }
-
-    // const head = packageInfo.gitHead;
-    // setVersion(packageInfo.version || "");
-    // setLicense(packageInfo.license || "");
-    // const repoUrl = url?.match(/github.com(.+).git/)?.[1];
-    // if (!repoUrl || !head) {
-    //   setLoadingReadMe(false);
-    //   return;
-    // }
-
-    // setRepo(repoUrl);
-    // const readmeUrl = `https://raw.githubusercontent.com/${repoUrl}/${head}/README.md`;
-    // fetch(readmeUrl).then((res) => {
-    //   if (res.status !== 200) {
-    //     setLoadingReadMe(false);
-    //     return;
-    //   }
-
-    //   res.text().then(setReadMe);
-    //   setLoadingReadMe(false);
-    // });
   }, [packageInfo]);
 
   if (loadingRegistryDetails || loadingPackageDetails) {
@@ -256,10 +222,11 @@ const ContentContainer = styled.div`
 
 const ReadMeContainer = styled.div`
   flex: 1;
+  max-width: calc(100% - 400px);
 `;
 
 const DetailsContainer = styled.div`
-  min-width: 300px;
+  width: 400px;
 `;
 
 const MarkdownContainer = styled.div`
