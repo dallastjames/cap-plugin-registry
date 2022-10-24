@@ -76,39 +76,65 @@ export default function ViewPackagePage() {
   }, [router.query]);
 
   useEffect(() => {
-    // Try to load README from GitHub
+    if (!packageInfo) return;
     const { url, type } = packageInfo?.repository || {};
     setLoadingReadMe(true);
     setReadMe(undefined);
-    setRepo("");
-    setVersion("");
-    setLicense("");
-    if (type !== "git" || !packageInfo.gitHead) {
-      // Currently only supporting GitHub readmes
-      setLoadingReadMe(false);
-      return;
-    }
+    setRepo(url);
+    setVersion(packageInfo.version ?? "");
+    setLicense(packageInfo.license ?? "");
 
-    const head = packageInfo.gitHead;
-    setVersion(packageInfo.version || "");
-    setLicense(packageInfo.license || "");
-    const repoUrl = url?.match(/github.com(.+).git/)?.[1];
-    if (!repoUrl || !head) {
-      setLoadingReadMe(false);
-      return;
-    }
+    const getReadme = async () => {
+      const searchParams = new URLSearchParams();
+      searchParams.append("packageId", packageInfo?.name ?? "");
 
-    setRepo(repoUrl);
-    const readmeUrl = `https://raw.githubusercontent.com/${repoUrl}/${head}/README.md`;
-    fetch(readmeUrl).then((res) => {
-      if (res.status !== 200) {
-        setLoadingReadMe(false);
+      const res = await fetch(
+        `/api/get-package-readme?${searchParams.toString()}`
+      );
+      if (res.status !== 200 && res.status !== 201) {
+        console.error(await res.json());
         return;
       }
-
-      res.text().then(setReadMe);
+      const content = await res.json();
+      setReadMe(content.readmeContents);
       setLoadingReadMe(false);
-    });
+    };
+
+    getReadme();
+
+    // Try to load README from GitHub
+    // const { url, type } = packageInfo?.repository || {};
+    // setLoadingReadMe(true);
+    // setReadMe(undefined);
+    // setRepo("");
+    // setVersion("");
+    // setLicense("");
+    // if (type !== "git" || !packageInfo.gitHead) {
+    //   // Currently only supporting GitHub readmes
+    //   setLoadingReadMe(false);
+    //   return;
+    // }
+
+    // const head = packageInfo.gitHead;
+    // setVersion(packageInfo.version || "");
+    // setLicense(packageInfo.license || "");
+    // const repoUrl = url?.match(/github.com(.+).git/)?.[1];
+    // if (!repoUrl || !head) {
+    //   setLoadingReadMe(false);
+    //   return;
+    // }
+
+    // setRepo(repoUrl);
+    // const readmeUrl = `https://raw.githubusercontent.com/${repoUrl}/${head}/README.md`;
+    // fetch(readmeUrl).then((res) => {
+    //   if (res.status !== 200) {
+    //     setLoadingReadMe(false);
+    //     return;
+    //   }
+
+    //   res.text().then(setReadMe);
+    //   setLoadingReadMe(false);
+    // });
   }, [packageInfo]);
 
   if (loadingRegistryDetails || loadingPackageDetails) {

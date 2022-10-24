@@ -1,7 +1,9 @@
+import { fetchNpmPackage } from "@/utils/fetch-npm-package";
 import {
   BAD_REQUEST,
   METHOD_NOT_ALLOWED,
   NOT_FOUND,
+  SERVER_ERROR,
   SUCCESS,
 } from "@/utils/http-codes";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -22,21 +24,23 @@ export default async function handler(
     return;
   }
   packageId = packageId.toLowerCase().trim();
-  const npmRes = await fetch(`https://registry.npmjs.com/${packageId}/latest`, {
-    method: "GET",
-  });
-  const packageDetails = await npmRes.json();
-  if (typeof packageDetails === "string") {
-    res.status(NOT_FOUND).send({ error: "Package Not Found" });
-    return;
-  }
-  if (
-    !packageDetails?.devDependencies?.["@capacitor/core"] &&
-    !packageDetails?.peerDependencies?.["@capacitor/core"] &&
-    !packageDetails?.dependencies?.["@capacitor/core"]
-  ) {
-    res.status(BAD_REQUEST).send({ error: "Not a Capacitor Plugin" });
-    return;
+  let packageDetails;
+  try {
+    packageDetails = await fetchNpmPackage(packageId);
+  } catch (e) {
+    if (e instanceof Error) {
+      if (e.message === "Not Found") {
+        res.status(NOT_FOUND).send({ error: "Package Not Found" });
+        return;
+      }
+      if (e.message === "Not a Capacitor plugin") {
+        res.status(BAD_REQUEST).send({ error: "Not a Capacitor plugin" });
+        return;
+      }
+
+      res.status(SERVER_ERROR).send({ error: "Internal Server Error" });
+      return;
+    }
   }
   res.status(SUCCESS).json(packageDetails);
 }

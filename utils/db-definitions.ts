@@ -12,33 +12,33 @@ export interface Database {
       package: {
         Row: {
           package_id: string
+          user_id: string
           name: string
           description: string | null
           category: Database["public"]["Enums"]["package_category"]
-          user_id: string
           keywords: string[]
-          fts: unknown | null
           sys_keywords: string[]
+          fts: unknown | null
         }
         Insert: {
           package_id: string
+          user_id?: string
           name: string
           description?: string | null
           category: Database["public"]["Enums"]["package_category"]
-          user_id?: string
           keywords?: string[]
-          fts?: unknown | null
           sys_keywords?: string[]
+          fts?: unknown | null
         }
         Update: {
           package_id?: string
+          user_id?: string
           name?: string
           description?: string | null
           category?: Database["public"]["Enums"]["package_category"]
-          user_id?: string
           keywords?: string[]
-          fts?: unknown | null
           sys_keywords?: string[]
+          fts?: unknown | null
         }
       }
       package_details: {
@@ -99,6 +99,26 @@ export interface Database {
           user_id?: string
           rating?: number
           last_updated?: string
+        }
+      }
+      package_readme: {
+        Row: {
+          package_id: string
+          last_updated: string
+          package_version: string
+          readme: string
+        }
+        Insert: {
+          package_id: string
+          last_updated?: string
+          package_version: string
+          readme: string
+        }
+        Update: {
+          package_id?: string
+          last_updated?: string
+          package_version?: string
+          readme?: string
         }
       }
     }
